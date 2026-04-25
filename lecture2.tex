@@ -1,0 +1,554 @@
+\documentclass[11pt]{beamer}
+
+\usetheme{default}
+\usecolortheme{default}
+\beamertemplatenavigationsymbolsempty
+\setbeamertemplate{footline}[frame number]
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{tikz-cd}
+\usepackage{mathtools}
+
+\hypersetup{
+    colorlinks = true
+}
+
+\AtBeginSection[]{
+\begin{frame}{Contents}
+    \tableofcontents[currentsection]
+\end{frame}
+}
+
+
+\lstdefinestyle{shell}{
+  basicstyle=\ttfamily\footnotesize,
+%  identifierstyle=\ttfamily
+  breaklines=true,
+  showstringspaces=false,
+  frame=single,
+  framerule=0.4pt,
+  xleftmargin=0.5em,
+  xrightmargin=0.5em,
+  columns=flexible,                   % Removes fixed-column spacing
+  showstringspaces=false                  % Hides space markers in strings
+}
+\lstset{style=shell}
+
+\title{Git and GitHub for Mathematicians}
+\subtitle{Lecture 2 --- Branching, Merging, and GitHub}
+\author{}
+\date{}
+
+\newcommand{\exercise}[1]{
+  \begin{frame}{Exercise}
+    #1
+  \end{frame}
+}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+
+% ------------------------------------------------------------------
+\section{Recap}
+
+\begin{frame}[fragile]{Where we stopped}
+  The basic Git cycle:
+\begin{lstlisting}
+git status
+git add <file>
+git commit
+git log
+\end{lstlisting}
+  \vfill
+  Today:
+  \begin{itemize}
+    \item Branches and merging
+    \item GitHub accounts and SSH keys
+    \item Pushing, pulling, collaborating
+  \end{itemize}
+\end{frame}
+
+% ------------------------------------------------------------------
+\section{Branches}
+
+\begin{frame}[fragile]{What is a branch?}
+  The history of a repository is a graph of commits.
+  %
+  So far, the history looked like this:
+  \begin{flushleft}
+    \begin{tikzcd}
+      \cdots
+      \arrow[r]
+      &
+      A
+      \arrow[r]
+      &B
+      \arrow[r]
+      &C
+      \arrow[r]
+      &
+      \underset{\mathtt{master}}{D}
+    \end{tikzcd}
+  \end{flushleft}
+  If more than one branch is present, the history may look like this:
+  \begin{flushleft}
+    \begin{tikzcd}
+      \cdots
+      \arrow[r]
+      &
+      A
+      \arrow[r]
+      \arrow[rd]
+      &B
+      \arrow[r]
+      &C
+      \arrow[r]
+      &
+      \underset{\mathtt{master}}{D}
+      \\
+      &
+      &
+      X
+      \arrow[r]
+      &
+      \underset{\mathtt{slave}}{Y}
+    \end{tikzcd}
+  \end{flushleft}
+  \vfill
+  A \emph{branch} is just a movable pointer to one of these commits.
+
+  % \vfill
+  The default branch is usually called \texttt{master}.
+\end{frame}
+
+\begin{frame}{Why branches?}
+  Typical uses:
+  \begin{itemize}
+    \item Try an alternative proof without touching the main version
+    \item Experiment with a different structure of a paper
+%    \item Develop a new feature in code while keeping a working version
+    \item Let a coauthor work in parallel without stepping on each other
+  \end{itemize}
+  \vfill
+  If the experiment fails: delete the branch, no harm done.
+  \\
+  If it works: merge it back.
+  \vfill
+  Takeaway: branches are cheap.  Use them!
+\end{frame}
+
+\begin{frame}[fragile]{Working with branches}
+\begin{lstlisting}
+git branch                     # list branches
+git branch new-proof           # create a branch
+git branch                     # see the new branch
+git switch new-proof           # switch to it
+git switch master              # go back
+git diff master new-proof      # compare to branches
+\end{lstlisting}
+%git switch -c new-proof       # create and switch
+%git branch -d new-proof       # delete (if merged)
+%  \vfill
+%  \small (Older Git versions use \texttt{git checkout} instead of \texttt{git switch}.)
+\end{frame}
+
+% ------------------------------------------------------------------
+\section{Merging}
+
+\begin{frame}[fragile]{Merging a branch}
+  From the branch you want to merge \emph{into}:
+\begin{lstlisting}
+git switch master
+git merge new-proof
+\end{lstlisting}
+  \vfill
+  Two cases:
+  \begin{itemize}
+  \item
+    \textbf{Fast-forward}: \texttt{master} had no new commits;
+    Git just moves the pointer.
+  \item
+    \textbf{Three-way merge}: both branches advanced;
+    Git creates a new ``merge commit''.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Fast forward}
+   \texttt{master} had no new commits;
+   Git just moves the pointer.
+   \vfill
+
+   Before:
+  \begin{flushleft}
+    \begin{tikzcd}
+      \cdots
+      \arrow[r]
+      &
+      A
+      \arrow[r]
+      &B
+      \arrow[r]
+      &
+      \underset{\mathtt{master}}{C}
+      \arrow[rd]
+      \\
+      &
+      &
+      &&
+      X
+      \arrow[r]
+      &
+      \underset{\mathtt{slave}}{Y}
+    \end{tikzcd}
+  \end{flushleft}
+
+  After:
+  \begin{flushleft}
+    \begin{tikzcd}
+      \cdots
+      \arrow[r]
+      &
+      A
+      \arrow[r]
+      &B
+      \arrow[r]
+      &
+      C
+      \arrow[rd]
+      \\
+      &
+      &
+      &&
+      X
+      \arrow[r]
+      &
+      \underset{\substack{\mathtt{master}\\ \mathtt{slave}}}{Y}
+    \end{tikzcd}
+  \end{flushleft}
+\end{frame}
+
+\begin{frame}[fragile]{Three-way merge}
+  Both branches advanced;
+    Git creates a new ``merge commit''.
+    \vfill
+    Before: 
+  \begin{flushleft}
+    \begin{tikzcd}
+      \cdots
+      \arrow[r]
+      &
+      A
+      \arrow[r]
+      \arrow[rd]
+      &B
+      \arrow[r]
+      &C
+      \arrow[r]
+      &
+      \underset{\mathtt{master}}{D}
+      \\
+      &
+      &
+      X
+      \arrow[r]
+      &
+      \underset{\mathtt{slave}}{Y}
+    \end{tikzcd}
+  \end{flushleft}
+
+  After:
+  \begin{flushleft}
+    \begin{tikzcd}
+      \cdots \arrow[r] & A \arrow[r] \arrow[rd] &B \arrow[r] &C
+      \arrow[r] & D \arrow[r] & \underset{\substack{\mathtt{master}\\
+          \mathtt{slave}}}{U}
+      \\
+      & & X \arrow[r] & Y \arrow[rru]
+    \end{tikzcd}
+  \end{flushleft}
+\end{frame}
+
+\begin{frame}[fragile]{Merge conflicts}
+  If both branches changed \emph{the same lines}, Git cannot decide.
+  It marks the conflict in the file:
+\begin{lstlisting}
+<<<<<<< HEAD
+The proof uses the dominated convergence theorem.
+=======
+The proof uses Fatou's lemma.
+>>>>>>> new-proof
+\end{lstlisting}
+  \vfill
+  To resolve:
+  \begin{enumerate}
+    \item Edit the file, keep what you want, remove the markers.
+    \item \texttt{git add <file>}
+    \item \texttt{git merge -{}-continue}
+  \end{enumerate}
+\end{frame}
+
+\exercise{
+  \begin{enumerate}
+  \item
+    \begin{itemize}
+    \item Create a new branch and switch to it
+    \item Make a new commit
+    \item Switch back to \texttt{master} and merge the new branch
+    \end{itemize}
+  \item
+    \begin{itemize}
+    \item Create a new branch and switch to it
+    \item Create a new file and commit the change
+    \item Switch back to \texttt{master} and edit the old file
+    \item Merge the new branch
+    \end{itemize}
+  \item
+    \begin{itemize}
+    \item Create a new branch and switch to it
+    \item Make new commit
+    \item Switch back to \texttt{master}
+    \item Edit the file, in the same place, where it is modified in
+      the other branch
+    \item Merge the new branch
+    \end{itemize}
+  \end{enumerate}
+}
+
+\begin{frame}[fragile]{Note on \LaTeX}
+  Git works at the level of \emph{lines} (in the source code).
+
+  When writing a \LaTeX document, keep each sentence in different
+  lines.
+  \vfill
+  {\color{red} Bad:}
+\begin{lstlisting}
+A vector is called future pointing if $g(v,X)>0$.  Past pointing otherwise.
+\end{lstlisting}
+  {\color{blue} Good:}
+\begin{lstlisting}
+A vector is called future pointing if $g(v,X)>0$.
+Past pointing otherwise.
+\end{lstlisting}
+  {\color{blue} Better:}
+\begin{lstlisting}
+A vector is called future pointing if $g(v,X)>0$.
+%
+Past pointing otherwise.
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}{A note on rebasing}
+  You may hear about \texttt{git rebase}.
+  \vfill
+  It is an alternative way to integrate changes, with a cleaner history
+  but sharper edges.
+  \vfill
+  \alert{We will not cover it.} Stick to \texttt{merge} for now;
+  you can learn rebasing later.
+\end{frame}
+
+% ------------------------------------------------------------------
+\section{GitHub}
+
+\begin{frame}{What GitHub gives you}
+  \begin{itemize}
+    \item Online hosting for your repositories
+    \item Backup (your laptop is not eternal)
+    \item A way to share code and papers
+    \item Collaboration tools: issues, pull requests, reviews
+  \end{itemize}
+  \vfill
+  Free for public \emph{and} private repos.
+%  \\
+ % Students get extra perks via \emph{GitHub Education}.
+\end{frame}
+
+% \begin{frame}{Public vs.\ private}
+%   \textbf{Public}
+%   \begin{itemize}
+%     \item Anyone can see the code
+%     \item Good for published work, open-source projects
+%   \end{itemize}
+%   \vfill
+%   \textbf{Private}
+%   \begin{itemize}
+%     \item Only you and invited collaborators see it
+%     \item Good for work in progress, unpublished papers
+%   \end{itemize}
+%   \vfill
+%   You can change visibility later.
+% \end{frame}
+
+% ------------------------------------------------------------------
+\section{SSH keys}
+
+\begin{frame}{Why SSH?}
+  To push to GitHub you must prove who you are.
+  \vfill
+  Two options:
+  \begin{itemize}
+    \item HTTPS + personal access token (awkward)
+    \item \textbf{SSH keys} (recommended)
+  \end{itemize}
+  \vfill
+  An SSH key is a pair:
+  \begin{itemize}
+    \item a \emph{private} key --- stays on your computer, never shared
+    \item a \emph{public} key --- uploaded to GitHub
+    \end{itemize}
+    \vfill
+    Three steps to enable SSH login to GitHub:
+    \begin{itemize}
+    \item Generate your SSH key pair
+    \item Upload your public SSH key
+    \item Download GitHub's public keys
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Generating a key pair}
+\begin{lstlisting}
+ssh-keygen
+\end{lstlisting}
+  Press Enter to accept the default location.
+  Choose a passphrase (leave blank for no passphrase).
+  \vfill
+  Two files are created:
+\begin{lstlisting}
+~/.ssh/id_ed25519          # PRIVATE -- never share
+~/.ssh/id_ed25519.pub      # PUBLIC  -- upload to GitHub
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Uploading the public key}
+  Copy the content of the \texttt{.pub} file:
+\begin{lstlisting}
+cat ~/.ssh/id_ed25519.pub
+\end{lstlisting}
+  On GitHub:
+  \begin{enumerate}
+    \item Settings $\to$ SSH and GPG keys $\to$ New SSH key
+    \item Paste the content, give it a title (e.g., ``laptop'',
+      ``work-pc'' \dots)
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}[fragile]{Download GitHub's public keys}
+  Copy GitHub's public keys from
+
+%  \url{https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints}
+
+  Paste the content to \texttt{\textasciitilde/.ssh/known\_hosts}
+\begin{lstlisting}
+cat >> ~/.ssh/known_hosts      # after pasting type Ctrl-D
+\end{lstlisting}
+
+  \vfill
+  Test that everything is working:
+\begin{lstlisting}
+ssh -T git@github.com
+\end{lstlisting}
+  You should see a message greeting you by username.
+
+
+\end{frame}
+
+% ------------------------------------------------------------------
+\section{Remotes}
+
+\begin{frame}[fragile]{Connecting a local repo to GitHub}
+  On GitHub: create an empty repository (no README, no license).
+  \vfill
+  Back in your terminal:
+\begin{lstlisting}
+git remote add origin git@github.com:you/repo.git
+git remote -v
+git push -u origin master
+\end{lstlisting}
+  \vfill
+  \texttt{origin} is just a nickname for the remote; you can have several.
+\end{frame}
+
+\begin{frame}[fragile]{Push and pull}
+\begin{lstlisting}
+git pull              # fetch and merge remote commits
+git fetch             # fetch only, do not merge
+git push              # send local commits to GitHub
+\end{lstlisting}
+  \vfill
+  Rule of thumb:
+  \begin{itemize}
+  \item \texttt{git pull} before you start working
+  \item \texttt{git push} when you are done
+  \end{itemize}
+  \vfill
+  Daily workflow:
+\begin{lstlisting}
+git switch your-branch
+git pull
+# standard git edit cycle (edit; git add; git commit)
+git push
+\end{lstlisting}
+\end{frame}
+
+
+
+% ------------------------------------------------------------------
+\section{Collaboration}
+
+\begin{frame}{A typical collaborative workflow}
+  \begin{enumerate}
+    \item \texttt{git clone} the repository
+    \item Create a branch for your change
+    \item Commit and push the branch
+    \item Open a \emph{pull request} on GitHub
+    \item Discuss, review, fix
+    \item Merge the pull request
+    \item Pull the updated \texttt{master} locally
+  \end{enumerate}
+  \vfill
+  This scales from two people to thousands.
+\end{frame}
+
+\begin{frame}{Pull requests in short}
+  A \emph{pull request} (PR) is a GitHub feature, not a Git command.
+  \vfill
+  It is a proposal: \emph{``please merge my branch into yours''}.
+  \vfill
+  It lets collaborators:
+  \begin{itemize}
+    \item see a diff of the proposed change
+    \item comment line by line
+    \item request modifications
+  \end{itemize}
+\end{frame}
+
+% ------------------------------------------------------------------
+\section{Hands-on}
+
+\begin{frame}{Exercise}
+  In pairs:
+  \begin{enumerate}
+    \item Each of you creates a repo on GitHub and pushes the project
+          from Lecture 1.
+    \item Clone your partner's repo.
+    \item Create a branch, add a small change (e.g.\ a new paragraph).
+    \item Push the branch and open a pull request.
+    \item As the owner: review, comment, and merge the {PR}.
+    \item Pull the updated \texttt{master} locally.
+  \end{enumerate}
+\end{frame}
+
+
+\end{document}
