@@ -1,0 +1,395 @@
+\documentclass[11pt]{beamer}
+
+%\usetheme{default}
+%\usecolortheme{default}
+\beamertemplatenavigationsymbolsempty
+\setbeamertemplate{footline}[frame number]
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{graphics}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks = true
+}
+
+\AtBeginSection[]{
+\begin{frame}{Contents}
+    \tableofcontents[currentsection]
+\end{frame}
+}
+
+\lstdefinestyle{shell}{
+  basicstyle=\ttfamily\footnotesize,
+%  identifierstyle=\ttfamily
+  breaklines=true,
+  showstringspaces=false,
+  frame=single,
+  framerule=0.4pt,
+  xleftmargin=0.5em,
+  xrightmargin=0.5em,
+  columns=flexible,                   % Removes fixed-column spacing
+  showstringspaces=false                  % Hides space markers in strings
+}
+\lstset{style=shell}
+
+\title{Git and GitHub for Mathematicians}
+\subtitle{Lecture 1 --- The Shell and Git Basics}
+\author{}
+\date{}
+
+\newcommand{\exercise}[1]{
+  \begin{frame}{Exercise}
+    #1
+  \end{frame}
+}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% ------------------------------------------------------------------
+
+\begin{frame}{Why version control?}
+  \begin{center}
+    \includegraphics[width=.6\textwidth]{phdcomics-thesis.jpg}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Why version control?}
+  Typical pain points in a mathematician's workflow:
+  \begin{itemize}
+    \item \texttt{thesis\_v2\_final\_REALLY\_FINAL.tex}
+    \item Changes overwritten by a coauthor
+%    \item ``It worked yesterday, what did I change?''
+    \item Sending \texttt{.zip} files by email
+    \item No record of \emph{why} a given change was made
+  \end{itemize}
+  \vfill
+  Version control solves all of this.
+\end{frame}
+
+\begin{frame}{Git vs. GitHub}
+  \textbf{Git}
+  \begin{itemize}
+    \item A \emph{distributed} version control system
+    \item Runs locally on your computer
+    \item Free software, works offline
+  \end{itemize}
+  \vfill
+  \textbf{GitHub}
+  \begin{itemize}
+    \item A commercial website that hosts Git repositories
+    \item Adds collaboration features (issues, pull requests, \ldots)
+    \item Alternatives: GitLab, Bitbucket, Codeberg, \ldots
+
+      Univie offers git hosting, but their service is pretty primitive
+  \end{itemize}
+  \vfill
+  \alert{They are not the same thing.}
+\end{frame}
+
+\begin{frame}{GUIs for git}
+  Git is a textual program, i.e., it works the
+  \emph{shell} (text console)
+
+  \vfill
+  A few graphical programs built over git are available
+  \begin{itemize}
+  \item gitk  (available on Univie computers)
+  \item sourcegit
+  \item integration in various editors (VSCode, Emacs, Vim\ldots)
+  \item and others \url{https://git-scm.com/tools/guis}
+  \end{itemize}
+
+  We do not cover the usage of such tools, but they might be useful,
+  especially for the content of the second lecture.
+\end{frame}
+
+\begin{frame}{Bibliography}
+  \begin{itemize}
+    \item \emph{Pro Git} (beyond our purpose) \url{https://git-scm.com/book}
+    \item Git cheat sheet \url{https://git-scm.com/cheat-sheet}
+    \item Oh My Git \url{https://ohmygit.org}
+    \item Git Immersion \url{https://gitimmersion.com}
+    \item Learn Git Branching \url{https://learngitbranching.js.org}
+    \end{itemize}
+
+    \vfill
+
+    But mostly\ldots learn by doing!
+\end{frame}
+
+\begin{frame}{Contents}
+  \tableofcontents
+\end{frame}
+
+
+
+
+% ------------------------------------------------------------------
+\section{A minimal shell survival kit}
+
+\begin{frame}{The shell}
+  A \emph{shell} is a program that reads commands and runs them.
+  \begin{itemize}
+    \item The \emph{prompt} is where you type
+    \item At all times there is a \emph{current working directory}
+    \item Commands usually act relative to that directory
+  \end{itemize}
+  \vfill
+  You only need a handful of commands for this course.
+\end{frame}
+
+\begin{frame}[fragile]{Navigating the filesystem}
+\begin{lstlisting}
+ls                     # list files
+ls -l                  # long listing
+cd some/dir            # change directory
+cd ..                  # go up one level
+cd                     # go to the home directory
+mkdir directory        # create a directory
+\end{lstlisting}
+%ls -a             # include hidden files
+%cd -         # go back to previous directory
+\vfill
+Content after \texttt{\#} are \emph{comments} and shouldn't be typed in
+the shell
+  \vfill
+  Useful tricks:
+  \begin{itemize}
+    \item \texttt{Tab} completes
+    \item Up/down arrows browse the command history
+%    \item \texttt{man cmd} or \texttt{cmd -{}-help} for documentation
+  \end{itemize}
+\end{frame}
+
+\exercise{
+  \begin{itemize}
+  \item Create a directory for the exercises of this course
+  \item Familiarize with this new commands
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------
+\section{Configuring Git}
+
+\begin{frame}[fragile]{First-time setup}
+  Tell Git who you are (only once per machine):
+\begin{lstlisting}
+git config --global user.name "Your Name"
+git config --global user.email "you@example.com"
+\end{lstlisting}
+  \vfill
+  Check your settings:
+\begin{lstlisting}
+git config --list
+\end{lstlisting}
+\end{frame}
+
+% ------------------------------------------------------------------
+\section{Creating a repository}
+
+\begin{frame}[fragile]{Starting a repository}
+  A \emph{repository} (``repo'') is a folder whose history Git tracks.
+\begin{lstlisting}
+mkdir my-paper
+cd my-paper
+git init
+\end{lstlisting}
+\vfill
+This creates a hidden folder \texttt{.git/} where Git stores everything.
+
+% \vfill
+  \alert{Do not touch \texttt{.git/} by hand.}
+\end{frame}
+
+\exercise{
+  Create a new repository
+}
+
+
+% ------------------------------------------------------------------
+\section{Existing repositories}
+
+\begin{frame}[fragile]{Cloning}
+  To get a copy of an existing repository (notice the \texttt{.git} at
+  the end):
+  \begin{lstlisting}
+    git clone https://github.com/user/repo.git
+  \end{lstlisting}
+  This:
+  \begin{itemize}
+    \item downloads the full history
+    \item creates a folder \texttt{repo/}
+    \item sets up a connection to the original (the \emph{remote})
+  \end{itemize}
+  \vfill
+  You now have your own, fully independent copy.
+\end{frame}
+
+\exercise{
+  Clone the repository of this course (note: this is not
+  repository url)
+
+  \url{https://github.com/davidemanini/git-course-2026}
+}
+
+\section{Daily workflow}
+
+\begin{frame}{The three areas}
+  Git works with three places:
+  \vfill
+  \begin{center}
+  \begin{tabular}{ll}
+    \textbf{Working directory} & the files you actually edit \\
+    \textbf{Staging area} (index) & what will go in the next commit \\
+    \textbf{Repository} & the history of committed snapshots \\
+  \end{tabular}
+  \end{center}
+  \vfill
+  The basic cycle:
+  \[
+    \text{edit} \longrightarrow \texttt{git add <files>} \longrightarrow \texttt{git commit}
+  \]
+\end{frame}
+
+\begin{frame}[fragile]{The basic cycle}
+\begin{lstlisting}
+git status                    # what is going on?
+# edit paper.tex
+git add paper.tex             # stage a file
+git add .                     # stage everything
+git commit                    # record a snapshot
+\end{lstlisting}
+  \vfill
+  \texttt{git status} is your best friend. Run it often.
+\end{frame}
+
+\begin{frame}{Writing good commit messages}
+  A commit message should answer: \emph{what changed and why?}
+  \vfill
+  Conventions:
+  \begin{itemize}
+    \item Short first line (${\leq}$ 70 characters)
+    \item Use the imperative: ``Add lemma\ldots'', not ``Added\ldots''
+%    \item Optional longer body after a blank line
+  \end{itemize}
+  \vfill
+  {\color{blue}Good} and {\color{red} bad} examples:
+  \begin{itemize}
+  \item \texttt{Fix proof of Theorem
+      {\color{red}2.1}
+    {\color{blue} on triangular comparison}}
+    \item \texttt{Add section on Sobolev embeddings}
+    \item \texttt{Rewrite introduction after referee report}
+      \item \texttt{\color{red}Add details}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  Key takeaways: \LARGE 
+  \begin{itemize}
+  \item Commits are {\tiny almost always} immutable:
+
+    think before committing
+  \item Good commits messages are paramount
+  \item Commits should be atomic
+  \end{itemize}
+\end{frame}
+
+
+\exercise{
+  \begin{itemize}
+  \item
+    Create a few new commits
+  \end{itemize}
+}
+% ------------------------------------------------------------------
+\section{Inspecting history}
+
+\begin{frame}[fragile]{Looking at the history}
+\begin{lstlisting}
+git log
+git log --oneline
+\end{lstlisting}
+%git show <commit-hash>
+  \vfill
+  Every commit has a unique hash (\texttt{a3f1c9e\ldots}). The first
+  7 characters are usually enough.
+\end{frame}
+
+\begin{frame}[fragile]{Seeing what changed}
+\begin{lstlisting}
+git diff                 # unstaged changes
+git diff --staged        # staged but not committed
+git diff <commit>        # vs. a past commit
+git diff <old> <new>     # compare two commits
+\end{lstlisting}
+  \vfill
+  Output uses the standard ``unified diff'' format:
+  lines starting with \texttt{-} are removed, \texttt{+} are added.
+\end{frame}
+
+\exercise{
+  \begin{itemize}
+  \item Play with \texttt{git log} and \texttt{git diff}
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------
+\section{Ignoring files}
+
+\begin{frame}[fragile]{\texttt{.gitignore}}
+  Not every file should be tracked: compiled output, backups, caches\ldots
+  \vfill
+  Create a file called \texttt{.gitignore} in the repo root:
+\begin{lstlisting}
+# LaTeX auxiliary files
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.toc
+*.pdf
+\end{lstlisting}
+\end{frame}
+
+% ------------------------------------------------------------------
+\section{Hands-on}
+
+\begin{frame}{Exercise}
+  \begin{enumerate}
+    \item Create a directory \texttt{workshop/} and \texttt{cd} into it.
+    \item Run \texttt{git init}.
+    \item Create a small \texttt{hello.tex} (or \texttt{hello.py}).
+    \item Commit it.
+    \item Edit it, run \texttt{git diff}, then commit the change.
+    \item Add a \texttt{.gitignore} and commit it.
+    \item Inspect the history with \texttt{git log -{}-oneline}.
+  \end{enumerate}
+  \vfill
+%  Try to break things and ask questions.
+\end{frame}
+
+\begin{frame}{Summary}
+  You now know how to:
+  \begin{itemize}
+    \item Move around a shell
+    \item Create a Git repository
+    \item Stage and commit changes
+    \item Inspect history and diffs
+    \item Clone existing repositories
+    \item Ignore unwanted files
+  \end{itemize}
+  \vfill
+  Next lecture: branches, merging, and GitHub.
+\end{frame}
+
+\end{document}
