@@ -87,6 +87,8 @@
   \end{itemize}
   \vfill
   \alert{They are not the same thing.}
+  \vfill
+  Please, log out from GitHub now
 \end{frame}
 
 \begin{frame}{GUIs for git}
@@ -353,24 +355,18 @@ git diff <old> <new>     # compare two commits
 *.toc
 *.pdf
 \end{lstlisting}
+\vfill
+The \texttt{.gitignore} of this repository is appropriate for \LaTeX\
+projects
+
+\vfill
+Takeaway: adding \texttt{.gitignore} should be one of the first commits
 \end{frame}
 
-% ------------------------------------------------------------------
-\section{Hands-on}
+\exercise{
+  Add a file \texttt{.gitignore} to your project and commit it
+}
 
-\begin{frame}{Exercise}
-  \begin{enumerate}
-    \item Create a directory \texttt{workshop/} and \texttt{cd} into it.
-    \item Run \texttt{git init}.
-    \item Create a small \texttt{hello.tex} (or \texttt{hello.py}).
-    \item Commit it.
-    \item Edit it, run \texttt{git diff}, then commit the change.
-    \item Add a \texttt{.gitignore} and commit it.
-    \item Inspect the history with \texttt{git log -{}-oneline}.
-  \end{enumerate}
-  \vfill
-%  Try to break things and ask questions.
-\end{frame}
 
 \begin{frame}{Summary}
   You now know how to:
@@ -385,5 +381,32 @@ git diff <old> <new>     # compare two commits
   \vfill
   Next lecture: branches, merging, and GitHub.
 \end{frame}
+
+% ------------------------------------------------------------------
+
+% \begin{frame}{Exercise}
+%   \begin{enumerate}
+%     \item Create a directory \texttt{workshop/} and \texttt{cd} into it.
+%     \item Run \texttt{git init}.
+%     \item Create a small \texttt{hello.tex} (or \texttt{hello.py}).
+%     \item Commit it.
+%     \item Edit it, run \texttt{git diff}, then commit the change.
+%     \item Add a \texttt{.gitignore} and commit it.
+%     \item Inspect the history with \texttt{git log -{}-oneline}.
+%   \end{enumerate}
+%   \vfill
+% %  Try to break things and ask questions.
+% \end{frame}
+
+\section{Hausaufagabe}
+
+\exercise{
+  \begin{itemize}
+  \item Familiarize with the shell
+  \item Setup git to a different computer
+  \item Create a new repository a make some commits
+  \item Inspect history and compare commits
+  \end{itemize}
+}
 
 \end{document}
