@@ -328,21 +328,26 @@ The proof uses Fatou's lemma.
 \begin{frame}[fragile]{Note on \LaTeX}
   Git works at the level of \emph{lines} (in the source code).
 
-  When writing a \LaTeX document, keep each sentence in different
+  When writing in \LaTeX, keep each sentence in different
   lines.
+  
+  Better yet, keep lines short ($\leq 75$) and separate sentences
+  with \texttt{\%}
+
   \vfill
   {\color{red} Bad:}
 \begin{lstlisting}
-A vector is called future pointing if $g(v,X)>0$.  Past pointing otherwise.
+A causal vector $v$ will be called future pointing if $g(v,X)>0$.  Past pointing otherwise.
 \end{lstlisting}
   {\color{blue} Good:}
 \begin{lstlisting}
-A vector is called future pointing if $g(v,X)>0$.
+A causal vector $v$ will be called future pointing if $g(v,X)>0$.
 Past pointing otherwise.
 \end{lstlisting}
   {\color{blue} Better:}
 \begin{lstlisting}
-A vector is called future pointing if $g(v,X)>0$.
+A causal vector $v$ will be called future pointing
+if $g(v,X)>0$.
 %
 Past pointing otherwise.
 \end{lstlisting}
@@ -367,7 +372,8 @@ Past pointing otherwise.
     \item Online hosting for your repositories
     \item Backup (your laptop is not eternal)
     \item A way to share code and papers
-    \item Collaboration tools: issues, pull requests, reviews
+    \item Collaboration tools: pull requests, issues\ldots
+    \item Easy web interface
   \end{itemize}
   \vfill
   Free for public \emph{and} private repos.
@@ -495,13 +501,21 @@ git push              # send local commits to GitHub
   \vfill
   Daily workflow:
 \begin{lstlisting}
-git switch your-branch
+git switch your-branch    # optional, depends on what you work on
 git pull
 # standard git edit cycle (edit; git add; git commit)
 git push
 \end{lstlisting}
 \end{frame}
 
+\exercise{
+  \begin{itemize}
+  \item Create an empty repository on GitHub
+  \item On your computer add local the remote GitHub repository
+  \item Push your local master branch
+  \item Make more commits on the local master branch and push them
+  \end{itemize}
+}
 
 
 % ------------------------------------------------------------------
@@ -533,6 +547,20 @@ git push
     \item request modifications
   \end{itemize}
 \end{frame}
+
+\exercise{
+  To be done by user $A$ and $B$
+  \begin{itemize}
+  \item[$A$] Give access to $B$ to your private repository
+  \item[$B$] Clone the repository of $A$
+  \item[$B$] Create a new branch and make some edits
+  \item[$B$] Push the new branch
+  \item[$B$] Open a pull request
+  \item[$A$] Review the pull request, discuss with $B$, and merge it
+  \end{itemize}
+
+  Repeat the exercise swapping the roles
+}
 
 % ------------------------------------------------------------------
 \section{Hands-on}
