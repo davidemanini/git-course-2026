@@ -1,4 +1,4 @@
-# Git & GitHub Workshop for PhD Students in Mathematics
+# Git & GitHub: an introduction
 
 **Duration:** 2 lectures
 **Target audience:** PhD students in Mathematics with little to no prior experience in version control or the command line
