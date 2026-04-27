@@ -8,6 +8,8 @@
   University computers, Git is already available.)
 * Create an account on [GitHub](https://github.com/).  **Important:** Log out from GitHub before
   the first lecture.
+* Download and compile the file `lecture1.tex`: you will copy and
+  paste commands from there.
 * **Optional:**  You might want to download a [Graphical interface to Git](https://git-scm.com/tools/guis). (On University computers, gitk is already available.)
 
 
