@@ -478,19 +478,25 @@ You will be asked if you trust the key; answer `yes'.
   Back in your terminal:
 \begin{lstlisting}
 git remote add origin git@github.com:you/repo.git
-git remote -v
-git push -u origin master
+git remote -v                        # List remote repositories
 \end{lstlisting}
+  \texttt{origin} is just a nickname for the remote; you can have
+  several.
   \vfill
-  \texttt{origin} is just a nickname for the remote; you can have several.
+  Next you need to connect a specific branch to a remote repository
+\begin{lstlisting}
+git switch <branch>
+git push -u origin        # Tell git to push <branch> to origin
+\end{lstlisting}
+You need to do this for all branches
 \end{frame}
 
 \begin{frame}[fragile]{Push and pull}
 \begin{lstlisting}
 git pull              # fetch and merge remote commits
-git fetch             # fetch only, do not merge
 git push              # send local commits to GitHub
 \end{lstlisting}
+%git fetch             # fetch only, do not merge
   \vfill
   Rule of thumb:
   \begin{itemize}
@@ -500,7 +506,7 @@ git push              # send local commits to GitHub
   \vfill
   Daily workflow:
 \begin{lstlisting}
-git switch your-branch    # optional, depends on what you work on
+git switch your-branch
 git pull
 # standard git edit cycle (edit; git add; git commit)
 git push
@@ -512,7 +518,8 @@ git push
   \item Create an empty repository on GitHub
   \item On your computer add local the remote GitHub repository
   \item Push your local master branch
-  \item Make more commits on the local master branch and push them
+  \item Make a few commits on a different branch and push them
+  \item Inspect the history on GitHub
   \end{itemize}
 }
 
@@ -522,8 +529,9 @@ git push
 
 \begin{frame}{A typical collaborative workflow}
   \begin{enumerate}
-    \item \texttt{git clone} the repository
-    \item Create a branch for your change
+    \item \texttt{git clone} the repository (or \texttt{git pull} if
+      you are already collaborating)
+    \item Create a branch for your change (do not touch other people's branches)
     \item Commit and push the branch
     \item Open a \emph{pull request} on GitHub
     \item Discuss, review, fix
