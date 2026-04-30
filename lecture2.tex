@@ -529,8 +529,7 @@ git push
 
 \begin{frame}{A typical collaborative workflow}
   \begin{enumerate}
-    \item \texttt{git clone} the repository (or \texttt{git pull} if
-      you are already collaborating)
+  \item \texttt{git clone} the repository (using SSH, not HTTPS)
     \item Create a branch for your change (do not touch other people's branches)
     \item Commit and push the branch
     \item Open a \emph{pull request} on GitHub
@@ -559,7 +558,7 @@ git push
   To be done by user $A$ and $B$
   \begin{itemize}
   \item[$A$] Give access to $B$ to your private repository
-  \item[$B$] Clone the repository of $A$
+  \item[$B$] Clone the repository of $A$ 
   \item[$B$] Create a new branch and make some edits
   \item[$B$] Push the new branch
   \item[$B$] Open a pull request
@@ -570,18 +569,27 @@ git push
 }
 
 % ------------------------------------------------------------------
-\section{Hands-on}
+\section{Hausaufgabe}
 
 \begin{frame}{Exercise}
-  In pairs:
   \begin{enumerate}
+    \item
+    \begin{itemize}
+    \item Setup SSH keys on a different computer
+    \item Clone your repository on that computer
+    \item Make some edits and push them
+    \item Pull from a different computer
+    \end{itemize}
+  \item In pairs:
+    \begin{itemize}
     \item Each of you creates a repo on GitHub and pushes the project
-          from Lecture 1.
+      from Lecture 1.
     \item Clone your partner's repo.
     \item Create a branch, add a small change (e.g.\ a new paragraph).
     \item Push the branch and open a pull request.
     \item As the owner: review, comment, and merge the {PR}.
     \item Pull the updated \texttt{master} locally.
+    \end{itemize}
   \end{enumerate}
 \end{frame}
 
